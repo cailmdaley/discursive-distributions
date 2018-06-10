@@ -9,10 +9,7 @@ import seaborn as sns
 import pandas as pd
 
 wv = word2vec.Word2Vec.load('corpus/word2vec_alpha=0.04_cbow_mean=1_min_count=10_iter=35_negative=9_sample=0.0065_sg=0_size=300_window=5_workers=4').wv
-model.predict_output_word(['i', 'that', 'must', 'they', ''])
-model.score([['Fuck']])
-model.doesnt_match
-    # 'of', 'each', 'prison'
+
 wv.predict_output_word([
     'of', 'the', 'commonwealth', 'to', 
     'procure', 'statements', 'of', 'the', 'affairs', 'of'])
@@ -30,8 +27,6 @@ plt.xscale('log'); plt.show()
 [wv.index2word[index] for index in lengths.argsort()[-40:] if wv.index2word[index] not in STOPWORDS]
 [wv.index2word[index] for index in lengths.argsort()[-40:] if wv.vocab[wv.index2word[index]].count < 1e3]
 [wv.index2word[index] for index in lengths.argsort()[-200:] if wv.vocab[wv.index2word[index]].count > 1e3 and wv.index2word[index] not in STOPWORDS]
-
-foo = wv.most_similar_cosmul(['lawful', 'idle'], ['unlawful'])
 
 def relative_similarity(pos, neg=None, rows=10, topn=10**5):
     most_similar = [word[0] for word in \

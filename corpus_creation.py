@@ -9,9 +9,8 @@ from visualization import to_tensorboard
 import pathlib
 import subprocess as sp
 
-# raw_text = textract.process('corpus/raw/1856b_Revelations_of_prison_life.epub').decode()
 try:
-    nlp('foo')
+    nlp('')
 except:
     nlp = spacy.load('en_core_web_md', disable=['parser', 'ner'], max_length=1e7)
     nlp.add_pipe(nlp.create_pipe('sentencizer'))
@@ -163,8 +162,8 @@ class Corpus:
                         save_file.write(document_string + '\n')
             
 if __name__ =='__main__':
-    corpus = Corpus('corpus/', 'corpus/raw/')
+    corpus = Corpus(save_dir='~/discursive_distributions/prison_corpus', 
+        raw_dir='prison_corpus_raw/')
     corpus.save('sentences', bigrams=True)
-    
     
     

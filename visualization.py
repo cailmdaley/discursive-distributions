@@ -11,11 +11,6 @@ def to_tensorboard(model, output_path, name, labels=None):
         file_metadata.write("Text\tFrequency\n".encode('utf-8'))
         for i, word in enumerate(model.wv.index2word):
             placeholder[i] = model[word]
-            # temporary solution for https://github.com/tensorflow/tensorflow/issues/9094
-            # if word == '':
-            #     print("Emply Line, should replecaed by any thing else, or will cause a bug of tensorboard")
-            #     file_metadata.write("{0}".format('<Empty Line>').encode('utf-8') + b'\n')
-            # else:
             file_metadata.write("{0}".format(word).encode('utf-8'))
             if labels is not None:
                 file_metadata.write("\t{}".format(labels[i]).encode('utf-8'))
