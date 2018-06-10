@@ -1,4 +1,4 @@
-![\ ](final_paper/figures/full_distribution.png)
+![Fig. 1](final_paper/figures/full_distribution.png)
 
 ## Code layout
 
