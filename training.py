@@ -56,14 +56,15 @@ class Trainer:
         
         return model_accuracy_dict
         
-    def to_tensorboard(model, output_path, name, labels=None):
+    def to_tensorboard(self, output_path, name, labels=None):
+        pathlib.Path(output_path).mkdir(exist_ok=True)
         meta_file = name + ".tsv"
-        placeholder = np.zeros((len(model.wv.index2word), model.wv.vector_size))
+        placeholder = np.zeros((len(self.model.wv.index2word), self.model.wv.vector_size))
 
         with open(os.path.join(output_path,meta_file), 'wb') as file_metadata:
             file_metadata.write("Text\tFrequency\n".encode('utf-8'))
-            for i, word in enumerate(model.wv.index2word):
-                placeholder[i] = model[word]
+            for i, word in enumerate(self.model.wv.index2word):
+                placeholder[i] = self.model[word]
                 file_metadata.write("{0}".format(word).encode('utf-8'))
                 if labels is not None:
                     file_metadata.write("\t{}".format(labels[i]).encode('utf-8'))
@@ -105,18 +106,18 @@ def hyper_param_comparison():
     print(hyper_param_dict)
 
 if __name__ =='__main__':
-    trainer = Trainer(save_dir='~/discursive_distributions/prison_corpus', 
+    trainer = Trainer(save_dir='/Users/cdaley/discursive_distributions/prison_corpus', 
         algorithm='word2vec')
     model = trainer.train(alpha=0.04, cbow_mean=1, min_count=10, iter=20, 
-        hs=1, sample=0.001, sg=0, size=300, window=5, workers=4)
+        hs=0, sample=0.001, sg=0, size=300, window=5, workers=4)
     trainer.compare_models('word2vec_alpha=0.04_cbow_mean=1_min_count=10_iter=20_hs=1_sample=0.001_sg=0_size=300_window=5_workers=4')
     hyper_param_comparison()
     
     # word vector analysis object
     wv = model.wv
-    print(wv.most_similar('greed'))
+    print(wv.most_similar('classification'))
     # export to tensorboard:
-    to_tensorboard(model, 'corpus/tensorboard', 'count')
+    trainer.to_tensorboard('/Users/cdaley/discursive_distributions/prison_corpus', 'count')
 
 # to load previously trained model:
 # model = doc2vec.Doc2Vec.load('corpus/doc2vec_dm=1_dbow_words=0_dm_mean=0_iter=5')
