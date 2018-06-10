@@ -1,4 +1,4 @@
-![\ ](final_paper/figures/full_distribution.png)
+![Fig. 1](final_paper/figures/full_distribution.png)
 
 ## Code layout
 1. `corpus_creation.py`: Reads in PDFs/EPUBs/text files, processes them, and saves the cleaned tokens to a text file for whichever NLP model.
