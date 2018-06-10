@@ -3,6 +3,9 @@ import gensim.models.word2vec as word2vec
 import gensim.models.doc2vec as doc2vec
 import gensim.test.utils
 import pathlib
+import sys, os
+import tensorflow as tf
+from tensorflow.contrib.tensorboard.plugins import projector
 
 # %reload_ext autoreload
 # %autoreload 2
@@ -28,13 +31,13 @@ class Trainer:
         
         if self.algorithm == 'word2vec':
             sentences = word2vec.PathLineSentences(self.save_dir.joinpath('line_sentences'))
-            model = word2vec.Word2Vec(sentences, **kwargs)
+            self.model = word2vec.Word2Vec(sentences, **kwargs)
         if self.algorithm == 'doc2vec':
-            model = doc2vec.Doc2Vec(self, **kwargs)
+            self.model = doc2vec.Doc2Vec(self, **kwargs)
             
         savepath = self.save_dir.joinpath(self.algorithm + '_' + arg_string)
-        model.save(str(savepath))
-        return model
+        self.model.save(str(savepath))
+        return self.model
         
     def compare_models(self, prefix=None):
         prefix = self.algorithm if prefix is None else prefix
@@ -52,6 +55,39 @@ class Trainer:
             print(path.name, tot_acc)
         
         return model_accuracy_dict
+        
+    def to_tensorboard(model, output_path, name, labels=None):
+        meta_file = name + ".tsv"
+        placeholder = np.zeros((len(model.wv.index2word), model.wv.vector_size))
+
+        with open(os.path.join(output_path,meta_file), 'wb') as file_metadata:
+            file_metadata.write("Text\tFrequency\n".encode('utf-8'))
+            for i, word in enumerate(model.wv.index2word):
+                placeholder[i] = model[word]
+                file_metadata.write("{0}".format(word).encode('utf-8'))
+                if labels is not None:
+                    file_metadata.write("\t{}".format(labels[i]).encode('utf-8'))
+                file_metadata.write(b'\n')
+
+        # define the model without training
+        sess = tf.InteractiveSession()
+
+        embedding = tf.Variable(placeholder, trainable = False, name = name)
+        tf.global_variables_initializer().run()
+
+        saver = tf.train.Saver()
+        writer = tf.summary.FileWriter(output_path, sess.graph)
+
+        # adding into projector
+        config = projector.ProjectorConfig()
+        embed = config.embeddings.add()
+        embed.tensor_name = name
+        embed.metadata_path = meta_file
+
+        # Specify the width and height of a single thumbnail.
+        projector.visualize_embeddings(writer, config)
+        saver.save(sess, os.path.join(output_path, name + '.ckpt'))
+        print('Run `tensorboard --logdir={0}` to run visualize result on tensorboard'.format(output_path))
 
 def hyper_param_comparison():
     accuracy_dict = trainer.compare_models()

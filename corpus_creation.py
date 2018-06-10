@@ -1,9 +1,9 @@
 from glob import glob
-import spacy
 import textract
+import epub_conversion.utils
+import spacy
 import gensim, gensim.test.utils
-from gensim.models import word2vec, doc2vec
-from gensim.models import phrases
+from gensim.models import phrases, word2vec, doc2vec
 from gensim.parsing.preprocessing import STOPWORDS
 from visualization import to_tensorboard
 import pathlib
@@ -26,7 +26,7 @@ class Corpus:
     def read_book(self, path):
         # extract text as byte string, convert to unicode
         if path.name[-4:] == 'epub':
-            book = open_book(path)
+            book = epub_conversion.utils.open_book(path)
             lines = epub_conversion.utils.convert_epub_to_lines(book)
             extracted_sentences = []
             for line in lines:
