@@ -78,7 +78,7 @@ if __name__ =='__main__':
     
     # word vector analysis object
     wv = model.wv
-    wv.most_similar('greed')
+    print(wv.most_similar('greed'))
     # export to tensorboard:
     to_tensorboard(model, 'corpus/tensorboard', 'count')
 

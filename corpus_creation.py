@@ -162,7 +162,7 @@ class Corpus:
                         save_file.write(document_string + '\n')
             
 if __name__ =='__main__':
-    corpus = Corpus(save_dir='~/discursive_distributions/prison_corpus', 
+    corpus = Corpus(save_dir='/Users/cdaley/discursive_distributions/prison_corpus', 
         raw_dir='prison_corpus_raw/')
     corpus.save('sentences', bigrams=True)
     
